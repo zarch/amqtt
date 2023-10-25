@@ -19,29 +19,29 @@ packages = [
 ]
 
 [tool.poetry.dependencies]
-python = "^3.7"
+python = ">=3.8.1,<3.13"
 transitions = "^0.8.0"
-websockets = ">=9.0,<11.0"
-passlib = "^1.7.0"
+websockets = "^12.0"
+passlib = "^1.7.4"
 docopt = "^0.6.0"
-PyYAML = ">=5.4.0,<7.0"
-coveralls = {version = "^3.0.1", optional = true}
+PyYAML = "^6.0.1"
+coveralls = {version = "^3.3.1", optional = true}
 
 [tool.poetry.extras]
 ci = ["coveralls"]
 
-[tool.poetry.dev-dependencies]
-pytest = "^6.2.2"
-pytest-cov = "^2.11.1"
+[tool.poetry.group.dev.dependencies]
+pytest = "^7.4.3"
+pytest-cov = "^4.1.0"
 pytest-asyncio = "^0.14.0"
 asyncmock = "^0.4.0"
-mypy = "^0.812"
-pylint = "^2.7.2"
-black = "^21.10b0"
-flake8 = "^3.9.0"
-hypothesis = "^6.10.0"
+mypy = "^1.6.1"
+pylint = "^3.0.2"
+black = "^23.10.1"
+flake8 = "^6.1.0"
+hypothesis = "^6.88.1"
 pytest-logdog = "^0.1.0"
-psutil = "^5.9.0"
+psutil = "^5.9.6"
 
 [tool.poetry.scripts]
 amqtt = 'amqtt.scripts.broker_script:main'
@@ -67,6 +67,174 @@ amqtt_sub = 'amqtt.scripts.sub_script:main'
 
 [tool.poetry.plugins."amqtt.client.plugins"]
 "packet_logger_plugin" = "amqtt.plugins.logging:PacketLoggerPlugin"
+
+[tool.interrogate]
+ignore-init-method = true
+ignore-init-module = false
+ignore-magic = false
+ignore-semiprivate = false
+ignore-private = false
+ignore-property-decorators = false
+ignore-module = false
+ignore-nested-functions = false
+ignore-nested-classes = true
+ignore-setters = false
+fail-under = 0 # %
+exclude = ["setup.py", "docs", "build", "tests", "samples"]
+ignore-regex = ["^get$", "^mock_.*", ".*BaseClass.*"]
+# possible values: 0 (minimal output), 1 (-v), 2 (-vv)
+verbose = 0
+quiet = false
+whitelist-regex = []
+color = true
+omit-covered-files = false
+generate-badge = "."
+badge-format = "svg"
+
+
+[tool.ruff]
+# Same as Black.
+line-length = 120
+
+# Allow unused variables when underscore-prefixed.
+dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
+
+# Assume Python 3.10
+target-version = "py310"
+
+#  E/W pycodestyle
+#  C90 mccabe
+#    I isort
+#    N pep8-naming
+#    D pydocstyle
+#   UP pyupgrade
+#  YTT flake8-2020
+#  ANN flake8-annotations
+#    S flake8-bandit
+#  BLE flake8-blind-except
+#  FBT flake8-boolean-trap
+#    B flake8-bugbear
+#   A flake8-builtins
+#  COM flake8-commas
+#   C4 flake8-comprehensions
+#  DTZ flake8-datetimez
+#  T10 flake8-debugger
+#   DJ flake8-django
+#   EM flake8-errmsg
+#  EXE flake8-executable
+#  ISC flake8-implicit-str-concat
+#  ICN flake8-import-conventions
+#    G flake8-logging-format
+#  INP flake8-no-pep420
+#  PIE flake8-pie
+#  T20 flake8-print
+#  PYI flake8-pyi
+#   PT flake8-pytest-style
+#    Q flake8-quotes
+#  RSE flake8-raise
+#  RET flake8-return
+#  SLF flake8-self
+#  SIM flake8-simplify
+#  TID flake8-tidy-imports
+#  TCH flake8-type-checking
+#  ARG flake8-unused-arguments
+#  PTH flake8-use-pathlib
+#  ERA eradicate
+#   PD pandas-vet
+#  PGH pygrep-hooks
+#   PL Pylint
+#  TRY tryceratops
+#  NPY NumPy-specific rules
+#  RUF Ruff-specific rules
+select = [
+    "E", "W", "I",
+    # "C90", "N", "D", "UP", "YTT", "ANN", "S", "BLE",
+    # "B", "A", "COM", "C4", "DTZ", "T10", "EM", "EXE", "ISC",
+    # "ICN", "G", "T20", "PYI", "Q", "RSE", "RET", "SLF", "SIM", "TID",
+    # "TCH", "ARG", "PTH", "ERA", "PD", "PGH", "PL", "TRY", "NPY", "RUF"
+]
+ignore = [
+    "ANN001", # Missing type annotation for function argument `n`
+    "ANN101", # Missing type annotation for `self` in method
+    "ANN201", # Missing return type annotation for public function
+    "ANN202", # Missing return type annotation for private function
+    "ANN204", # Missing return type annotation for special method
+    "D100", # Missing docstring in public module
+    "D101", # Missing docstring in public class
+    "D102", # Missing docstring in public method
+    "D107", # Missing docstring in `__init__`
+    "D205", # 1 blank line required between summary line and description
+    "D400", # First line should end with a period
+    "D415", # First line should end with a period, question mark, or exclamation point
+    "EM101", # Exception must not use a string literal, assign to variable first
+    "G002", # Logging statement uses `%
+    "RET504", # Unnecessary assignment to `data` before `return` statement
+    "TRY003", # Avoid specifying long messages outside the exception class
+
+    ]
+
+# Allow autofix for all enabled rules (when `--fix`) is provided.
+fixable = [
+    "E", "W", "C90", "I", "N", "D", "UP", "YTT", "ANN", "S", "BLE",
+    "FBT", "B", "A", "COM", "C4", "DTZ", "T10", "EM", "EXE", "ISC",
+    "ICN", "G", "T20", "PYI", "Q", "RSE", "RET", "SLF", "SIM", "TID",
+    "TCH", "ARG", "PTH", "ERA", "PD", "PGH", "PL", "TRY", "NPY", "RUF"
+]
+unfixable = []
+
+# Exclude a variety of commonly ignored directories.
+exclude = [
+    ".direnv",
+    ".eggs",
+    ".git",
+    ".mypy_cache",
+    ".nox",
+    ".pants.d",
+    ".pytype",
+    ".ruff_cache",
+    ".tox",
+    ".venv",
+    "__pypackages__",
+    "_build",
+    "buck-out",
+    "build",
+    "dist",
+    "venv",
+    "tests",
+]
+
+[tool.ruff.per-file-ignores]
+"__init__.py" = ["E402", "D104"]
+"tables.py" = ["A003", ]
+"tests/*" = ["S101"]
+
+
+[tool.ruff.flake8-quotes]
+docstring-quotes = "double"
+
+
+[tool.ruff.isort]
+case-sensitive = true
+
+
+[tool.ruff.mccabe]
+# Unlike Flake8, default to a complexity level of 10.
+max-complexity = 10
+
+
+[tool.bandit]
+skips = [
+    "B402",
+    "B321",
+]
+
+
+[tool.typos.default.extend-words]
+ue = "ue"
+
+[tool.pytest]
+addopts = "--doctest-modules"
+doctest_optionflags = "ELLIPSIS NORMALIZE_WHITESPACE IGNORE_EXCEPTION_DETAIL"
 
 
 [build-system]
