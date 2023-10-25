@@ -3,65 +3,51 @@
 # See the file license.txt for copying permission.
 
 import io
-from websockets import WebSocketCommonProtocol
-from websockets import ConnectionClosed
-from asyncio import StreamReader, StreamWriter
 import logging
+from asyncio import StreamReader, StreamWriter
+
+from websockets import ConnectionClosed, WebSocketCommonProtocol
 
 
 class ReaderAdapter:
-    """
-    Base class for all network protocol reader adapter.
+    """Base class for all network protocol reader adapter.
 
     Reader adapters are used to adapt read operations on the network depending on the
     protocol used
     """
 
     async def read(self, n=-1) -> bytes:
-        """
-        Read up to n bytes. If n is not provided, or set to -1, read until EOF and
+        """Read up to n bytes. If n is not provided, or set to -1, read until EOF and
         return all read bytes. If the EOF was received and the internal buffer is
         empty, return an empty bytes object. :return: packet read as bytes data
         """
 
     def feed_eof(self):
-        """
-        Acknowledge EOF
-        """
+        """Acknowledge EOF"""
 
 
 class WriterAdapter:
-    """
-    Base class for all network protocol writer adapter.
+    """Base class for all network protocol writer adapter.
 
     Writer adapters are used to adapt write operations on the network depending on
     the protocol used
     """
 
     def write(self, data):
-        """
-        write some data to the protocol layer
-        """
+        """Write some data to the protocol layer"""
 
     async def drain(self):
-        """
-        Let the write buffer of the underlying transport a chance to be flushed.
-        """
+        """Let the write buffer of the underlying transport a chance to be flushed."""
 
     def get_peer_info(self):
-        """
-        Return peer socket info (remote address and remote port as tuple
-        """
+        """Return peer socket info (remote address and remote port as tuple"""
 
     async def close(self):
-        """
-        Close the protocol connection
-        """
+        """Close the protocol connection"""
 
 
 class WebSocketsReader(ReaderAdapter):
-    """
-    WebSockets API reader adapter
+    """WebSockets API reader adapter
     This adapter relies on WebSocketCommonProtocol to read from a WebSocket.
     """
 
@@ -75,8 +61,7 @@ class WebSocketsReader(ReaderAdapter):
         return data
 
     async def _feed_buffer(self, n=1):
-        """
-        Feed the data buffer by reading a Websocket message.
+        """Feed the data buffer by reading a Websocket message.
         :param n: if given, feed buffer until it contains at least n bytes
         """
         buffer = bytearray(self._stream.read())
@@ -94,8 +79,7 @@ class WebSocketsReader(ReaderAdapter):
 
 
 class WebSocketsWriter(WriterAdapter):
-    """
-    WebSockets API writer adapter
+    """WebSockets API writer adapter
     This adapter relies on WebSocketCommonProtocol to read from a WebSocket.
     """
 
@@ -104,15 +88,11 @@ class WebSocketsWriter(WriterAdapter):
         self._stream = io.BytesIO(b"")
 
     def write(self, data):
-        """
-        write some data to the protocol layer
-        """
+        """Write some data to the protocol layer"""
         self._stream.write(data)
 
     async def drain(self):
-        """
-        Let the write buffer of the underlying transport a chance to be flushed.
-        """
+        """Let the write buffer of the underlying transport a chance to be flushed."""
         data = self._stream.getvalue()
         if len(data):
             await self._protocol.send(data)
@@ -129,8 +109,7 @@ class WebSocketsWriter(WriterAdapter):
 
 
 class StreamReaderAdapter(ReaderAdapter):
-    """
-    Asyncio Streams API protocol adapter
+    """Asyncio Streams API protocol adapter
     This adapter relies on StreamReader to read from a TCP socket.
     Because API is very close, this class is trivial
     """
@@ -150,8 +129,7 @@ class StreamReaderAdapter(ReaderAdapter):
 
 
 class StreamWriterAdapter(WriterAdapter):
-    """
-    Asyncio Streams API protocol adapter
+    """Asyncio Streams API protocol adapter
     This adapter relies on StreamWriter to write to a TCP socket.
     Because API is very close, this class is trivial
     """
@@ -187,8 +165,7 @@ class StreamWriterAdapter(WriterAdapter):
 
 
 class BufferReader(ReaderAdapter):
-    """
-    Byte Buffer reader adapter
+    """Byte Buffer reader adapter
     This adapter simply adapt reading a byte buffer.
     """
 
@@ -200,8 +177,7 @@ class BufferReader(ReaderAdapter):
 
 
 class BufferWriter(WriterAdapter):
-    """
-    ByteBuffer writer adapter
+    """ByteBuffer writer adapter
     This adapter simply adapt writing to a byte buffer
     """
 
@@ -209,9 +185,7 @@ class BufferWriter(WriterAdapter):
         self._stream = io.BytesIO(buffer)
 
     def write(self, data):
-        """
-        write some data to the protocol layer
-        """
+        """Write some data to the protocol layer"""
         self._stream.write(data)
 
     async def drain(self):

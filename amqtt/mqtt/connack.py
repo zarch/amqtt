@@ -1,10 +1,10 @@
 # Copyright (c) 2015 Nicolas JOUANIN
 #
 # See the file license.txt for copying permission.
-from amqtt.mqtt.packet import CONNACK, MQTTPacket, MQTTFixedHeader, MQTTVariableHeader
-from amqtt.codecs import read_or_raise, bytes_to_int
-from amqtt.errors import AMQTTException
 from amqtt.adapters import ReaderAdapter
+from amqtt.codecs import bytes_to_int, read_or_raise
+from amqtt.errors import AMQTTException
+from amqtt.mqtt.packet import CONNACK, MQTTFixedHeader, MQTTPacket, MQTTVariableHeader
 
 CONNECTION_ACCEPTED = 0x00
 UNACCEPTABLE_PROTOCOL_VERSION = 0x01
@@ -15,7 +15,6 @@ NOT_AUTHORIZED = 0x05
 
 
 class ConnackVariableHeader(MQTTVariableHeader):
-
     __slots__ = ("session_parent", "return_code")
 
     def __init__(self, session_parent=None, return_code=None):
@@ -44,7 +43,8 @@ class ConnackVariableHeader(MQTTVariableHeader):
 
     def __repr__(self):
         return type(self).__name__ + "(session_parent={}, return_code={})".format(
-            hex(self.session_parent), hex(self.return_code)
+            hex(self.session_parent),
+            hex(self.return_code),
         )
 
 
@@ -80,7 +80,7 @@ class ConnackPacket(MQTTPacket):
             if fixed.packet_type is not CONNACK:
                 raise AMQTTException(
                     "Invalid fixed packet type %s for ConnackPacket init"
-                    % fixed.packet_type
+                    % fixed.packet_type,
                 )
             header = fixed
         super().__init__(header)

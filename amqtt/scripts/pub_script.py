@@ -1,8 +1,7 @@
 # Copyright (c) 2015 Nicolas JOUANIN
 #
 # See the file license.txt for copying permission.
-"""
-amqtt_pub - MQTT 3.1.1 publisher
+"""amqtt_pub - MQTT 3.1.1 publisher
 
 Usage:
     amqtt_pub --version
@@ -32,19 +31,19 @@ Options:
     --will-retain
     --extra-headers EXTRA_HEADERS      JSON object with key-value pairs of additional headers for websocket connections
     -d                  Enable debug messages
-"""
+"""  # noqa: E501
 
-import sys
-import logging
 import asyncio
-import os
 import json
+import logging
+import os
+import sys
+
+from docopt import docopt
 
 import amqtt
-from amqtt.client import MQTTClient, ConnectException
-from docopt import docopt
+from amqtt.client import ConnectException, MQTTClient
 from amqtt.utils import read_yaml_config
-
 
 logger = logging.getLogger(__name__)
 
@@ -61,14 +60,14 @@ def _gen_client_id():
 def _get_qos(arguments):
     try:
         return int(arguments["--qos"][0])
-    except:
+    except Exception:
         return None
 
 
 def _get_extra_headers(arguments):
     try:
         return json.loads(arguments["--extra-headers"])
-    except:
+    except Exception:
         return {}
 
 
@@ -82,8 +81,8 @@ def _get_message(arguments):
             with open(arguments["-f"]) as f:
                 for line in f:
                     yield line.encode(encoding="utf-8")
-        except:
-            logger.error("Failed to read file '%s'" % arguments["-f"])
+        except Exception as exc:
+            logger.error(f"Failed to read file {arguments['-f']!r} with {exc}")
     if arguments["-l"]:
         import sys
 
@@ -153,8 +152,9 @@ def main(*args, **kwargs):
     else:
         config = read_yaml_config(
             os.path.join(
-                os.path.dirname(os.path.realpath(__file__)), "default_client.yaml"
-            )
+                os.path.dirname(os.path.realpath(__file__)),
+                "default_client.yaml",
+            ),
         )
         logger.debug("Using default configuration")
     loop = asyncio.get_event_loop()

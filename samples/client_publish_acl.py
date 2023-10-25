@@ -1,8 +1,7 @@
-import logging
 import asyncio
+import logging
 
-from amqtt.client import MQTTClient, ConnectException
-
+from amqtt.client import ConnectException, MQTTClient
 
 #
 # This sample shows how to publish messages to broker using different QOS
@@ -20,7 +19,9 @@ async def test_coro():
         await C.publish("data/memes", b"REAL FUN", qos=0x01)
         await C.publish("repositories/amqtt/master", b"NEW STABLE RELEASE", qos=0x01)
         await C.publish(
-            "repositories/amqtt/devel", b"THIS NEEDS TO BE CHECKED", qos=0x01
+            "repositories/amqtt/devel",
+            b"THIS NEEDS TO BE CHECKED",
+            qos=0x01,
         )
         await C.publish("calendar/amqtt/releases", b"NEW RELEASE", qos=0x01)
         logger.info("messages published")

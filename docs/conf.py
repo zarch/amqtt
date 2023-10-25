@@ -52,8 +52,8 @@ master_doc = "index"
 
 # General information about the project.
 project = "amqtt"
-copyright = "2021, aMQTT contributers"
-author = "aMQTT contributers"
+copyright = "2021, aMQTT contributors"
+author = "aMQTT contributors"
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -305,7 +305,6 @@ if not on_rtd:  # only import and set the theme if we're building docs locally
     def setup(app):
         # app.add_javascript("custom.js")
         app.add_stylesheet("theme_overrides.css")
-
 
 else:
     # Override default css to get a larger width for ReadTheDoc build

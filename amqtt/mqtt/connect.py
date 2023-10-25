@@ -2,6 +2,7 @@
 #
 # See the file license.txt for copying permission.
 
+from amqtt.adapters import ReaderAdapter
 from amqtt.codecs import (
     bytes_to_int,
     decode_data_with_length,
@@ -11,20 +12,18 @@ from amqtt.codecs import (
     int_to_bytes,
     read_or_raise,
 )
-from amqtt.mqtt.packet import (
-    MQTTPacket,
-    MQTTFixedHeader,
-    CONNECT,
-    MQTTVariableHeader,
-    MQTTPayload,
-)
 from amqtt.errors import AMQTTException, NoDataException
-from amqtt.adapters import ReaderAdapter
+from amqtt.mqtt.packet import (
+    CONNECT,
+    MQTTFixedHeader,
+    MQTTPacket,
+    MQTTPayload,
+    MQTTVariableHeader,
+)
 from amqtt.utils import gen_client_id
 
 
 class ConnectVariableHeader(MQTTVariableHeader):
-
     __slots__ = ("proto_name", "proto_level", "flags", "keep_alive")
 
     USERNAME_FLAG = 0x80
@@ -36,7 +35,11 @@ class ConnectVariableHeader(MQTTVariableHeader):
     RESERVED_FLAG = 0x01
 
     def __init__(
-        self, connect_flags=0x00, keep_alive=0, proto_name="MQTT", proto_level=0x04
+        self,
+        connect_flags=0x00,
+        keep_alive=0,
+        proto_name="MQTT",
+        proto_level=0x04,
     ):
         super().__init__()
         self.proto_name = proto_name
@@ -46,7 +49,10 @@ class ConnectVariableHeader(MQTTVariableHeader):
 
     def __repr__(self):
         return "ConnectVariableHeader(proto_name={}, proto_level={}, flags={}, keepalive={})".format(
-            self.proto_name, self.proto_level, hex(self.flags), self.keep_alive
+            self.proto_name,
+            self.proto_level,
+            hex(self.flags),
+            self.keep_alive,
         )
 
     def _set_flag(self, val, mask):
@@ -149,7 +155,6 @@ class ConnectVariableHeader(MQTTVariableHeader):
 
 
 class ConnectPayload(MQTTPayload):
-
     __slots__ = (
         "client_id",
         "will_topic",
@@ -229,7 +234,9 @@ class ConnectPayload(MQTTPayload):
         return payload
 
     def to_bytes(
-        self, fixed_header: MQTTFixedHeader, variable_header: ConnectVariableHeader
+        self,
+        fixed_header: MQTTFixedHeader,
+        variable_header: ConnectVariableHeader,
     ):
         out = bytearray()
         # Client identifier
@@ -392,7 +399,7 @@ class ConnectPacket(MQTTPacket):
             if fixed.packet_type is not CONNECT:
                 raise AMQTTException(
                     "Invalid fixed packet type %s for ConnectPacket init"
-                    % fixed.packet_type
+                    % fixed.packet_type,
                 )
             header = fixed
         super().__init__(header)

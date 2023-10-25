@@ -1,34 +1,39 @@
 # Copyright (c) 2015 Nicolas JOUANIN
 #
 # See the file license.txt for copying permission.
-from asyncio import futures, Queue
-from amqtt.mqtt.protocol.handler import ProtocolHandler
+from asyncio import Queue, futures
+
+from amqtt.adapters import ReaderAdapter, WriterAdapter
+from amqtt.errors import MQTTException
 from amqtt.mqtt.connack import (
-    CONNECTION_ACCEPTED,
-    UNACCEPTABLE_PROTOCOL_VERSION,
-    IDENTIFIER_REJECTED,
     BAD_USERNAME_PASSWORD,
+    CONNECTION_ACCEPTED,
+    IDENTIFIER_REJECTED,
     NOT_AUTHORIZED,
+    UNACCEPTABLE_PROTOCOL_VERSION,
     ConnackPacket,
 )
 from amqtt.mqtt.connect import ConnectPacket
 from amqtt.mqtt.pingreq import PingReqPacket
 from amqtt.mqtt.pingresp import PingRespPacket
-from amqtt.mqtt.subscribe import SubscribePacket
+from amqtt.mqtt.protocol.handler import ProtocolHandler
 from amqtt.mqtt.suback import SubackPacket
-from amqtt.mqtt.unsubscribe import UnsubscribePacket
+from amqtt.mqtt.subscribe import SubscribePacket
 from amqtt.mqtt.unsuback import UnsubackPacket
-from amqtt.utils import format_client_message
-from amqtt.session import Session
+from amqtt.mqtt.unsubscribe import UnsubscribePacket
 from amqtt.plugins.manager import PluginManager
-from amqtt.adapters import ReaderAdapter, WriterAdapter
-from amqtt.errors import MQTTException
+from amqtt.session import Session
+from amqtt.utils import format_client_message
+
 from .handler import EVENT_MQTT_PACKET_RECEIVED, EVENT_MQTT_PACKET_SENT
 
 
 class BrokerProtocolHandler(ProtocolHandler):
     def __init__(
-        self, plugins_manager: PluginManager, session: Session = None, loop=None
+        self,
+        plugins_manager: PluginManager,
+        session: Session = None,
+        loop=None,
     ):
         super().__init__(plugins_manager, session, loop)
         self._disconnect_waiter = None
@@ -69,7 +74,7 @@ class BrokerProtocolHandler(ProtocolHandler):
         # as CONNECT messages are managed by the broker on client connection
         self.logger.error(
             "%s [MQTT-3.1.0-2] %s : CONNECT message received during messages handling"
-            % (self.session.client_id, format_client_message(self.session))
+            % (self.session.client_id, format_client_message(self.session)),
         )
         if self._disconnect_waiter is not None and not self._disconnect_waiter.done():
             self._disconnect_waiter.set_result(None)
@@ -116,11 +121,13 @@ class BrokerProtocolHandler(ProtocolHandler):
 
     @classmethod
     async def init_from_connect(
-        cls, reader: ReaderAdapter, writer: WriterAdapter, plugins_manager, loop=None
+        cls,
+        reader: ReaderAdapter,
+        writer: WriterAdapter,
+        plugins_manager,
+        loop=None,
     ):
-        """
-
-        :param reader:
+        """:param reader:
         :param writer:
         :param plugins_manager:
         :param loop:
@@ -140,14 +147,14 @@ class BrokerProtocolHandler(ProtocolHandler):
                 or connect.payload.will_message is None
             ):
                 raise MQTTException(
-                    "will flag set, but will topic/message not present in payload"
+                    "will flag set, but will topic/message not present in payload",
                 )
 
         if connect.variable_header.reserved_flag:
             raise MQTTException("[MQTT-3.1.2-3] CONNECT reserved flag must be set to 0")
         if connect.proto_name != "MQTT":
             raise MQTTException(
-                '[MQTT-3.1.2-1] Incorrect protocol name: "%s"' % connect.proto_name
+                '[MQTT-3.1.2-1] Incorrect protocol name: "%s"' % connect.proto_name,
             )
 
         connack = None
@@ -159,7 +166,8 @@ class BrokerProtocolHandler(ProtocolHandler):
                 connect.proto_level,
             )
             connack = ConnackPacket.build(
-                0, UNACCEPTABLE_PROTOCOL_VERSION
+                0,
+                UNACCEPTABLE_PROTOCOL_VERSION,
             )  # [MQTT-3.2.2-4] session_parent=0
         elif not connect.username_flag and connect.password_flag:
             connack = ConnackPacket.build(0, BAD_USERNAME_PASSWORD)  # [MQTT-3.1.2-22]
@@ -168,14 +176,16 @@ class BrokerProtocolHandler(ProtocolHandler):
                 format_client_message(address=remote_address, port=remote_port)
             )
             connack = ConnackPacket.build(
-                0, BAD_USERNAME_PASSWORD
+                0,
+                BAD_USERNAME_PASSWORD,
             )  # [MQTT-3.2.2-4] session_parent=0
         elif connect.password_flag and connect.password is None:
             error_msg = "Invalid password %s" % (
                 format_client_message(address=remote_address, port=remote_port)
             )
             connack = ConnackPacket.build(
-                0, BAD_USERNAME_PASSWORD
+                0,
+                BAD_USERNAME_PASSWORD,
             )  # [MQTT-3.2.2-4] session_parent=0
         elif connect.clean_session_flag is False and (
             connect.payload.client_id_is_random

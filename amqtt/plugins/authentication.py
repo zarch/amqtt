@@ -2,6 +2,7 @@
 #
 # See the file license.txt for copying permission.
 import logging
+
 from passlib.apps import custom_app_context as pwd_context
 
 
@@ -12,14 +13,14 @@ class BaseAuthPlugin:
             self.auth_config = self.context.config["auth"]
         except KeyError:
             self.context.logger.warning(
-                "'auth' section not found in context configuration"
+                "'auth' section not found in context configuration",
             )
 
     def authenticate(self, *args, **kwargs):
         if not self.auth_config:
             # auth config section not found
             self.context.logger.warning(
-                "'auth' section not found in context configuration"
+                "'auth' section not found in context configuration",
             )
             return False
         return True
@@ -33,12 +34,13 @@ class AnonymousAuthPlugin(BaseAuthPlugin):
         authenticated = super().authenticate(*args, **kwargs)
         if authenticated:
             allow_anonymous = self.auth_config.get(
-                "allow-anonymous", True
+                "allow-anonymous",
+                True,
             )  # allow anonymous by default
             if allow_anonymous:
                 authenticated = True
                 self.context.logger.debug(
-                    "Authentication success: config allows anonymous"
+                    "Authentication success: config allows anonymous",
                 )
             else:
                 try:
@@ -47,11 +49,11 @@ class AnonymousAuthPlugin(BaseAuthPlugin):
                     if self.context.logger.isEnabledFor(logging.DEBUG):
                         if authenticated:
                             self.context.logger.debug(
-                                "Authentication success: session has a non empty username"
+                                "Authentication success: session has a non empty username",
                             )
                         else:
                             self.context.logger.debug(
-                                "Authentication failure: session has an empty username"
+                                "Authentication failure: session has an empty username",
                             )
                 except KeyError:
                     self.context.logger.warning("Session information not available")
@@ -71,7 +73,7 @@ class FileAuthPlugin(BaseAuthPlugin):
             try:
                 with open(password_file) as f:
                     self.context.logger.debug(
-                        "Reading user database from %s" % password_file
+                        "Reading user database from %s" % password_file,
                     )
                     for line in f:
                         line = line.strip()
@@ -80,18 +82,18 @@ class FileAuthPlugin(BaseAuthPlugin):
                             if username:
                                 self._users[username] = pwd_hash
                                 self.context.logger.debug(
-                                    "user %s , hash=%s" % (username, pwd_hash)
+                                    "user %s , hash=%s" % (username, pwd_hash),
                                 )
                 self.context.logger.debug(
-                    "%d user(s) read from file %s" % (len(self._users), password_file)
+                    "%d user(s) read from file %s" % (len(self._users), password_file),
                 )
             except FileNotFoundError:
                 self.context.logger.warning(
-                    "Password file %s not found" % password_file
+                    "Password file %s not found" % password_file,
                 )
         else:
             self.context.logger.debug(
-                "Configuration parameter 'password_file' not found"
+                "Configuration parameter 'password_file' not found",
             )
 
     async def authenticate(self, *args, **kwargs):
@@ -103,7 +105,7 @@ class FileAuthPlugin(BaseAuthPlugin):
                 if not hash:
                     authenticated = False
                     self.context.logger.debug(
-                        "No hash found for user '%s'" % session.username
+                        "No hash found for user '%s'" % session.username,
                     )
                 else:
                     authenticated = pwd_context.verify(session.password, hash)

@@ -1,8 +1,7 @@
 # Copyright (c) 2015 Nicolas JOUANIN
 #
 # See the file license.txt for copying permission.
-"""
-aMQTT - MQTT 3.1.1 broker
+"""aMQTT - MQTT 3.1.1 broker
 
 Usage:
     amqtt --version
@@ -16,16 +15,16 @@ Options:
     -d                  Enable debug messages
 """
 
-import sys
-import logging
 import asyncio
+import logging
 import os
+import sys
+
+from docopt import docopt
 
 import amqtt
 from amqtt.broker import Broker
-from docopt import docopt
 from amqtt.utils import read_yaml_config
-
 
 default_config = {
     "listeners": {
@@ -38,7 +37,8 @@ default_config = {
     "auth": {
         "allow-anonymous": True,
         "password-file": os.path.join(
-            os.path.dirname(os.path.realpath(__file__)), "passwd"
+            os.path.dirname(os.path.realpath(__file__)),
+            "passwd",
         ),
         "plugins": ["auth_file", "auth_anonymous"],
     },
@@ -68,8 +68,9 @@ def main(*args, **kwargs):
     else:
         config = read_yaml_config(
             os.path.join(
-                os.path.dirname(os.path.realpath(__file__)), "default_broker.yaml"
-            )
+                os.path.dirname(os.path.realpath(__file__)),
+                "default_broker.yaml",
+            ),
         )
         logger.debug("Using default configuration")
     loop = asyncio.get_event_loop()

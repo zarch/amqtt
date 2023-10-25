@@ -15,7 +15,7 @@ Usage
              [ --will-topic WILL_TOPIC [--will-message WILL_MESSAGE] [--will-qos WILL_QOS] [--will-retain] ]
              [--extra-headers HEADER]
 
-Note that for simplicity, ``amqtt_sub`` uses mostly the same argument syntax as `mosquitto_sub`_.
+Note that for simplicity, ``amqtt_sub`` uses mostly the same argument syntax as `mosquito_sub`_.
 
 Options
 -------
@@ -23,7 +23,7 @@ Options
 --version           amqtt version information
 -h, --help          Display ``amqtt_sub`` usage help
 -c                  Set the YAML configuration file to read and pass to the client runtime.
--d                  Enable debugging informations.
+-d                  Enable debugging information.
 --ca-file           Define the path to a file containing PEM encoded CA certificates that are trusted. Used to enable SSL communication.
 --ca-path           Define the path to a directory containing PEM encoded CA certificates that are trusted. Used to enable SSL communication.
 --ca-data           Set the PEM encoded CA certificates that are trusted. Used to enable SSL communication.
@@ -32,7 +32,7 @@ Options
 -k                  Set the CONNECT keep alive timeout.
 -n                  Number of messages to read before ending. Read forever if not given.
 -q, --qos           Specify the quality of service to use for receiving messages. This QoS is sent in the subscribe request.
--t                  Topic filters to subcribe.
+-t                  Topic filters to subscribe.
 --url               Broker connection URL, conforming to `MQTT URL scheme`_.
 --will-topic        The topic on which to send a Will, in the event that the client disconnects unexpectedly.
 --will-message      Specify a message that will be stored by the broker and sent out if this client disconnects unexpectedly. This must be used in conjunction with ``--will-topic``.
@@ -63,7 +63,7 @@ If ``-c`` argument is given, ``amqtt_sub`` will read specific MQTT settings for 
 Examples
 --------
 
-Examples below are adapted from `mosquitto_sub`_ documentation.
+Examples below are adapted from `mosquito_sub`_ documentation.
 
 
 Subscribe with QoS 0 to all messages published under $SYS/:
@@ -77,7 +77,7 @@ Subscribe to 10 messages with QoS 2 from /#:
 
     amqtt_sub --url mqtt://localhost -t # -q 2 -n 10
 
-.. _mosquitto_sub : http://mosquitto.org/man/mosquitto_sub-1.html
+.. _mosquito_sub : http://mosquitto.org/man/mosquitto_sub-1.html
 
 Subscribe with QoS 0 to all messages published under $SYS/: over mqtt encapsulated in a websocket connection and additional headers:
 ::

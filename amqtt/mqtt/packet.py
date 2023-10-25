@@ -2,18 +2,12 @@
 #
 # See the file license.txt for copying permission.
 import asyncio
-
-from amqtt.codecs import (
-    bytes_to_hex_str,
-    decode_packet_id,
-    int_to_bytes,
-    read_or_raise,
-)
-from amqtt.errors import CodecException, MQTTException, NoDataException
-from amqtt.adapters import ReaderAdapter, WriterAdapter
 from datetime import datetime
 from struct import unpack
 
+from amqtt.adapters import ReaderAdapter, WriterAdapter
+from amqtt.codecs import bytes_to_hex_str, decode_packet_id, int_to_bytes, read_or_raise
+from amqtt.errors import CodecException, MQTTException, NoDataException
 
 RESERVED_0 = 0x00
 CONNECT = 0x01
@@ -34,7 +28,6 @@ RESERVED_15 = 0x0F
 
 
 class MQTTFixedHeader:
-
     __slots__ = ("packet_type", "remaining_length", "flags")
 
     def __init__(self, packet_type, flags=0, length=0):
@@ -62,7 +55,8 @@ class MQTTFixedHeader:
             out.append(packet_type)
         except OverflowError:
             raise CodecException(
-                "packet_type encoding exceed 1 byte length: value=%d", packet_type
+                "packet_type encoding exceed 1 byte length: value=%d",
+                packet_type,
             )
 
         encoded_length = encode_remaining_length(self.remaining_length)
@@ -79,14 +73,12 @@ class MQTTFixedHeader:
 
     @classmethod
     async def from_stream(cls, reader: ReaderAdapter):
-        """
-        Read and decode MQTT message fixed header from stream
+        """Read and decode MQTT message fixed header from stream
         :return: FixedHeader instance
         """
 
         async def decode_remaining_length():
-            """
-            Decode message length according to MQTT specifications
+            """Decode message length according to MQTT specifications
             :return:
             """
             multiplier = 1
@@ -104,7 +96,7 @@ class MQTTFixedHeader:
                     if multiplier > 128 * 128 * 128:
                         raise MQTTException(
                             "Invalid remaining length bytes:%s, packet_type=%d"
-                            % (bytes_to_hex_str(buffer), msg_type)
+                            % (bytes_to_hex_str(buffer), msg_type),
                         )
             return value
 
@@ -121,7 +113,8 @@ class MQTTFixedHeader:
 
     def __repr__(self):
         return type(self).__name__ + "(length={}, flags={})".format(
-            self.remaining_length, hex(self.flags)
+            self.remaining_length,
+            hex(self.flags),
         )
 
 
@@ -134,8 +127,7 @@ class MQTTVariableHeader:
         await writer.drain()
 
     def to_bytes(self) -> bytes:
-        """
-        Serialize header data to a byte array conforming to MQTT protocol
+        """Serialize header data to a byte array conforming to MQTT protocol
         :return: serialized data
         """
 
@@ -145,13 +137,14 @@ class MQTTVariableHeader:
 
     @classmethod
     async def from_stream(
-        cls, reader: asyncio.StreamReader, fixed_header: MQTTFixedHeader
+        cls,
+        reader: asyncio.StreamReader,
+        fixed_header: MQTTFixedHeader,
     ):
         pass
 
 
 class PacketIdVariableHeader(MQTTVariableHeader):
-
     __slots__ = ("packet_id",)
 
     def __init__(self, packet_id):
@@ -181,7 +174,9 @@ class MQTTPayload:
         await writer.drain()
 
     def to_bytes(
-        self, fixed_header: MQTTFixedHeader, variable_header: MQTTVariableHeader
+        self,
+        fixed_header: MQTTFixedHeader,
+        variable_header: MQTTVariableHeader,
     ):
         pass
 
@@ -196,7 +191,6 @@ class MQTTPayload:
 
 
 class MQTTPacket:
-
     __slots__ = ("fixed_header", "variable_header", "payload", "protocol_ts")
 
     FIXED_HEADER = MQTTFixedHeader
@@ -226,13 +220,14 @@ class MQTTPacket:
             variable_header_bytes = b""
         if self.payload:
             payload_bytes = self.payload.to_bytes(
-                self.fixed_header, self.variable_header
+                self.fixed_header,
+                self.variable_header,
             )
         else:
             payload_bytes = b""
 
         self.fixed_header.remaining_length = len(variable_header_bytes) + len(
-            payload_bytes
+            payload_bytes,
         )
         fixed_header_bytes = self.fixed_header.to_bytes()
 
@@ -240,20 +235,26 @@ class MQTTPacket:
 
     @classmethod
     async def from_stream(
-        cls, reader: ReaderAdapter, fixed_header=None, variable_header=None
+        cls,
+        reader: ReaderAdapter,
+        fixed_header=None,
+        variable_header=None,
     ):
         if fixed_header is None:
             fixed_header = await cls.FIXED_HEADER.from_stream(reader)
         if cls.VARIABLE_HEADER:
             if variable_header is None:
                 variable_header = await cls.VARIABLE_HEADER.from_stream(
-                    reader, fixed_header
+                    reader,
+                    fixed_header,
                 )
         else:
             variable_header = None
         if cls.PAYLOAD:
             payload = await cls.PAYLOAD.from_stream(
-                reader, fixed_header, variable_header
+                reader,
+                fixed_header,
+                variable_header,
             )
         else:
             payload = None
@@ -273,7 +274,10 @@ class MQTTPacket:
 
     def __repr__(self):
         return type(
-            self
+            self,
         ).__name__ + "(ts={!s}, fixed={!r}, variable={!r}, payload={!r})".format(
-            self.protocol_ts, self.fixed_header, self.variable_header, self.payload
+            self.protocol_ts,
+            self.fixed_header,
+            self.variable_header,
+            self.payload,
         )

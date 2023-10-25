@@ -1,9 +1,9 @@
 import yaml
-from hypothesis import given, strategies as st
-from hypothesis import provisional
+from hypothesis import given, provisional
+from hypothesis import strategies as st
 
-from amqtt.session import Session
 from amqtt import utils
+from amqtt.session import Session
 
 
 @given(st.text())

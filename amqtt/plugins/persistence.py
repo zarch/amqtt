@@ -1,8 +1,8 @@
 # Copyright (c) 2015 Nicolas JOUANIN
 #
 # See the file license.txt for copying permission.
-import sqlite3
 import pickle
+import sqlite3
 
 
 class SQLitePlugin:
@@ -16,7 +16,7 @@ class SQLitePlugin:
             self.init_db()
         except KeyError:
             self.context.logger.warning(
-                "'persistence' section not found in context configuration"
+                "'persistence' section not found in context configuration",
             )
 
     def init_db(self):
@@ -30,11 +30,11 @@ class SQLitePlugin:
                 self.context.logger.info("Database file '%s' opened" % self.db_file)
             except Exception as e:
                 self.context.logger.error(
-                    f"Error while initializing database '{self.db_file}' : {e}"
+                    f"Error while initializing database '{self.db_file}' : {e}",
                 )
         if self.cursor:
             self.cursor.execute(
-                "CREATE TABLE IF NOT EXISTS session(client_id TEXT PRIMARY KEY, data BLOB)"
+                "CREATE TABLE IF NOT EXISTS session(client_id TEXT PRIMARY KEY, data BLOB)",
             )
 
     async def save_session(self, session):
@@ -52,7 +52,8 @@ class SQLitePlugin:
     async def find_session(self, client_id):
         if self.cursor:
             row = self.cursor.execute(
-                "SELECT data FROM session where client_id=?", (client_id,)
+                "SELECT data FROM session where client_id=?",
+                (client_id,),
             ).fetchone()
             if row:
                 return pickle.loads(row[0])

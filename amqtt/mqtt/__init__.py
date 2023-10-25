@@ -2,37 +2,37 @@
 #
 # See the file license.txt for copying permission.
 from amqtt.errors import AMQTTException
+from amqtt.mqtt.connack import ConnackPacket
+from amqtt.mqtt.connect import ConnectPacket
+from amqtt.mqtt.disconnect import DisconnectPacket
 from amqtt.mqtt.packet import (
-    CONNECT,
     CONNACK,
-    PUBLISH,
-    PUBACK,
-    PUBREC,
-    PUBREL,
-    PUBCOMP,
-    SUBSCRIBE,
-    SUBACK,
-    UNSUBSCRIBE,
-    UNSUBACK,
+    CONNECT,
+    DISCONNECT,
     PINGREQ,
     PINGRESP,
-    DISCONNECT,
+    PUBACK,
+    PUBCOMP,
+    PUBLISH,
+    PUBREC,
+    PUBREL,
+    SUBACK,
+    SUBSCRIBE,
+    UNSUBACK,
+    UNSUBSCRIBE,
     MQTTFixedHeader,
 )
-from amqtt.mqtt.connect import ConnectPacket
-from amqtt.mqtt.connack import ConnackPacket
-from amqtt.mqtt.disconnect import DisconnectPacket
 from amqtt.mqtt.pingreq import PingReqPacket
 from amqtt.mqtt.pingresp import PingRespPacket
-from amqtt.mqtt.publish import PublishPacket
 from amqtt.mqtt.puback import PubackPacket
+from amqtt.mqtt.pubcomp import PubcompPacket
+from amqtt.mqtt.publish import PublishPacket
 from amqtt.mqtt.pubrec import PubrecPacket
 from amqtt.mqtt.pubrel import PubrelPacket
-from amqtt.mqtt.pubcomp import PubcompPacket
-from amqtt.mqtt.subscribe import SubscribePacket
 from amqtt.mqtt.suback import SubackPacket
-from amqtt.mqtt.unsubscribe import UnsubscribePacket
+from amqtt.mqtt.subscribe import SubscribePacket
 from amqtt.mqtt.unsuback import UnsubackPacket
+from amqtt.mqtt.unsubscribe import UnsubscribePacket
 
 packet_dict = {
     CONNECT: ConnectPacket,

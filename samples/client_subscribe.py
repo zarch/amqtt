@@ -1,9 +1,8 @@
-import logging
 import asyncio
+import logging
 
-from amqtt.client import MQTTClient, ClientException
+from amqtt.client import ClientException, MQTTClient
 from amqtt.mqtt.constants import QOS_1, QOS_2
-
 
 #
 # This sample shows how to subscbribe a topic and receive data from incoming messages
@@ -22,7 +21,7 @@ async def uptime_coro():
         [
             ("$SYS/broker/uptime", QOS_1),
             ("$SYS/broker/load/#", QOS_2),
-        ]
+        ],
     )
     logger.info("Subscribed")
     try:
@@ -31,7 +30,7 @@ async def uptime_coro():
             packet = message.publish_packet
             print(
                 "%d: %s => %s"
-                % (i, packet.variable_header.topic_name, str(packet.payload.data))
+                % (i, packet.variable_header.topic_name, str(packet.payload.data)),
             )
         await C.unsubscribe(["$SYS/broker/uptime", "$SYS/broker/load/#"])
         logger.info("UnSubscribed")

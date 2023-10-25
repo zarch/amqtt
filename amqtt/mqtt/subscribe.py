@@ -3,15 +3,6 @@
 # See the file license.txt for copying permission.
 import asyncio
 
-from amqtt.mqtt.packet import (
-    MQTTPacket,
-    MQTTFixedHeader,
-    SUBSCRIBE,
-    PacketIdVariableHeader,
-    MQTTPayload,
-    MQTTVariableHeader,
-)
-from amqtt.errors import AMQTTException, NoDataException
 from amqtt.codecs import (
     bytes_to_int,
     decode_string,
@@ -19,10 +10,18 @@ from amqtt.codecs import (
     int_to_bytes,
     read_or_raise,
 )
+from amqtt.errors import AMQTTException, NoDataException
+from amqtt.mqtt.packet import (
+    SUBSCRIBE,
+    MQTTFixedHeader,
+    MQTTPacket,
+    MQTTPayload,
+    MQTTVariableHeader,
+    PacketIdVariableHeader,
+)
 
 
 class SubscribePayload(MQTTPayload):
-
     __slots__ = ("topics",)
 
     def __init__(self, topics=None):
@@ -30,7 +29,9 @@ class SubscribePayload(MQTTPayload):
         self.topics = topics or []
 
     def to_bytes(
-        self, fixed_header: MQTTFixedHeader, variable_header: MQTTVariableHeader
+        self,
+        fixed_header: MQTTFixedHeader,
+        variable_header: MQTTVariableHeader,
     ):
         out = b""
         for topic in self.topics:
@@ -79,7 +80,7 @@ class SubscribePacket(MQTTPacket):
             if fixed.packet_type is not SUBSCRIBE:
                 raise AMQTTException(
                     "Invalid fixed packet type %s for SubscribePacket init"
-                    % fixed.packet_type
+                    % fixed.packet_type,
                 )
             header = fixed
 

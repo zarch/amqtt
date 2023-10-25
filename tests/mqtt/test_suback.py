@@ -4,9 +4,9 @@
 import asyncio
 import unittest
 
-from amqtt.mqtt.suback import SubackPacket, SubackPayload
-from amqtt.mqtt.packet import PacketIdVariableHeader
 from amqtt.adapters import BufferReader
+from amqtt.mqtt.packet import PacketIdVariableHeader
+from amqtt.mqtt.suback import SubackPacket, SubackPayload
 
 
 class SubackPacketTest(unittest.TestCase):
@@ -30,7 +30,7 @@ class SubackPacketTest(unittest.TestCase):
                 SubackPayload.RETURN_CODE_01,
                 SubackPayload.RETURN_CODE_02,
                 SubackPayload.RETURN_CODE_80,
-            ]
+            ],
         )
         suback = SubackPacket(variable_header=variable_header, payload=payload)
         out = suback.to_bytes()

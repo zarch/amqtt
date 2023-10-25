@@ -8,7 +8,7 @@ class BaseTopicPlugin:
             self.topic_config = self.context.config["topic-check"]
         except KeyError:
             self.context.logger.warning(
-                "'topic-check' section not found in context configuration"
+                "'topic-check' section not found in context configuration",
             )
             self.topic_config = None
 
@@ -16,7 +16,7 @@ class BaseTopicPlugin:
         if not self.topic_config:
             # auth config section not found
             self.context.logger.warning(
-                "'auth' section not found in context configuration"
+                "'auth' section not found in context configuration",
             )
             return False
         return True

@@ -65,4 +65,3 @@ News and updates are listed in the :doc:`changelog`.
    transition
    references/index
    license
-

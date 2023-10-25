@@ -1,9 +1,8 @@
-import logging
 import asyncio
+import logging
 
-from amqtt.client import MQTTClient, ConnectException
+from amqtt.client import ConnectException, MQTTClient
 from amqtt.mqtt.constants import QOS_1, QOS_2
-
 
 #
 # This sample shows how to publish messages to broker using different QOS
@@ -18,7 +17,7 @@ config = {
         "message": b"Dead or alive",
         "qos": 0x01,
         "retain": True,
-    }
+    },
 }
 
 

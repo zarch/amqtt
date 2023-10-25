@@ -1,12 +1,12 @@
 # Copyright (c) 2015 Nicolas JOUANIN
 #
 # See the file license.txt for copying permission.
-import unittest
 import asyncio
+import unittest
 
-from amqtt.mqtt.packet import CONNECT, MQTTFixedHeader
-from amqtt.errors import MQTTException
 from amqtt.adapters import BufferReader
+from amqtt.errors import MQTTException
+from amqtt.mqtt.packet import CONNECT, MQTTFixedHeader
 
 
 class TestMQTTFixedHeaderTest(unittest.TestCase):

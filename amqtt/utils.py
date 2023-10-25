@@ -6,9 +6,9 @@ from __future__ import annotations
 
 import logging
 import random
+import typing
 
 import yaml
-import typing
 
 if typing.TYPE_CHECKING:
     from amqtt.session import Session
@@ -17,7 +17,9 @@ logger = logging.getLogger(__name__)
 
 
 def format_client_message(
-    session: Session = None, address: str = None, port: int = None
+    session: Session = None,
+    address: str = None,
+    port: int = None,
 ) -> str:
     if session:
         return "(client id=%s)" % session.client_id

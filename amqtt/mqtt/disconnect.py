@@ -1,8 +1,8 @@
 # Copyright (c) 2015 Nicolas JOUANIN
 #
 # See the file license.txt for copying permission.
-from amqtt.mqtt.packet import MQTTPacket, MQTTFixedHeader, DISCONNECT
 from amqtt.errors import AMQTTException
+from amqtt.mqtt.packet import DISCONNECT, MQTTFixedHeader, MQTTPacket
 
 
 class DisconnectPacket(MQTTPacket):
@@ -16,7 +16,7 @@ class DisconnectPacket(MQTTPacket):
             if fixed.packet_type is not DISCONNECT:
                 raise AMQTTException(
                     "Invalid fixed packet type %s for DisconnectPacket init"
-                    % fixed.packet_type
+                    % fixed.packet_type,
                 )
             header = fixed
         super().__init__(header)

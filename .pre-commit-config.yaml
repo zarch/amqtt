@@ -1,16 +1,78 @@
 fail_fast: false
 repos:
-- repo: local
-  hooks:
-  - id: flake8
-    name: flake8
-    entry: flake8
-    language: system
-    types: [python]
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.5.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+        exclude: ^.*\.egg-info/
+      - id: check-merge-conflict
+      - id: check-case-conflict
+      - id: check-json
+      - id: check-toml
+        exclude: tests/fixtures/invalid_lock/poetry\.lock
+      - id: check-yaml
+      - id: pretty-format-json
+        args:
+          - --autofix
+          - --no-ensure-ascii
+          - --no-sort-keys
+      - id: check-ast
+      - id: debug-statements
+      - id: check-docstring-first
+      - id: check-added-large-files
+        args: ['--maxkb=5000']
+      - id: check-executables-have-shebangs
+      - id: check-shebang-scripts-are-executable
+      - id: mixed-line-ending
+      # - id: requirements-txt-fixer  # in conflict with poetry export
 
-  - id: black
-    name: Black
-    entry: black
-    args: [--check]
-    language: system
-    types: [python]
+  - repo: https://github.com/ambv/black
+    rev: 23.10.1
+    hooks:
+      - id: black
+
+  - repo: https://github.com/econchick/interrogate
+    rev: 1.5.0
+    hooks:
+      - id: interrogate
+
+
+
+  - repo: https://github.com/crate-ci/typos
+    rev: typos-dict-v0.11.2
+    hooks:
+      - id: typos
+
+  - repo: https://github.com/charliermarsh/ruff-pre-commit
+    rev: v0.1.2
+    hooks:
+      - id: ruff
+        args:
+          - --fix
+          - --exit-non-zero-on-fix
+
+  - repo: https://github.com/python-poetry/poetry
+    rev: '1.6.0'
+    hooks:
+      - id: poetry-check
+      # - id: poetry-lock
+      - id: poetry-export
+        # poetry export --without-hashes --without-urls \
+        #               -f requirements.txt -o requirements.txt
+        args: [
+          "--without-hashes",
+          "--without-urls",
+          "-f", "requirements.txt",
+          "-o", "requirements.txt"
+        ]
+      - id: poetry-export
+        # poetry export --without-hashes --without-urls --with dev \
+        #               -f requirements.txt -o dev-requirements.txt
+        args: [
+          "--without-hashes",
+          "--without-urls",
+          "--with", "dev",
+          "-f", "requirements.txt",
+          "-o", "dev-requirements.txt"
+        ]

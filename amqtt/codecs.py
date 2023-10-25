@@ -3,12 +3,12 @@
 # See the file license.txt for copying permission.
 import asyncio
 from struct import pack, unpack
+
 from amqtt.errors import NoDataException
 
 
 def bytes_to_hex_str(data):
-    """
-    converts a sequence of bytes into its displayable hex representation, ie: 0x??????
+    """Converts a sequence of bytes into its displayable hex representation, ie: 0x??????
     :param data: byte sequence
     :return: Hexadecimal displayable representation
     """
@@ -16,20 +16,18 @@ def bytes_to_hex_str(data):
 
 
 def bytes_to_int(data):
-    """
-    convert a sequence of bytes to an integer using big endian byte ordering
+    """Convert a sequence of bytes to an integer using big endian byte ordering
     :param data: byte sequence
     :return: integer value
     """
     try:
         return int.from_bytes(data, byteorder="big")
-    except:
+    except ValueError:
         return data
 
 
 def int_to_bytes(int_value: int, length: int) -> bytes:
-    """
-    convert an integer to a sequence of bytes using big endian byte ordering
+    """Convert an integer to a sequence of bytes using big endian byte ordering
     :param int_value: integer value to convert
     :param length: (optional) byte length
     :return: byte sequence
@@ -42,8 +40,7 @@ def int_to_bytes(int_value: int, length: int) -> bytes:
 
 
 async def read_or_raise(reader, n=-1):
-    """
-    Read a given byte number from Stream. NoDataException is raised if read gives no data
+    """Read a given byte number from Stream. NoDataException is raised if read gives no data
     :param reader: reader adapter
     :param n: number of bytes to read
     :return: bytes read
@@ -58,8 +55,7 @@ async def read_or_raise(reader, n=-1):
 
 
 async def decode_string(reader) -> str:
-    """
-    Read a string from a reader and decode it according to MQTT string specification
+    """Read a string from a reader and decode it according to MQTT string specification
     :param reader: Stream reader
     :return: string read from stream
     """
@@ -69,15 +65,14 @@ async def decode_string(reader) -> str:
         byte_str = await read_or_raise(reader, str_length[0])
         try:
             return byte_str.decode(encoding="utf-8")
-        except:
+        except UnicodeDecodeErrors:
             return str(byte_str)
     else:
         return ""
 
 
 async def decode_data_with_length(reader) -> bytes:
-    """
-    Read data from a reader. Data is prefixed with 2 bytes length
+    """Read data from a reader. Data is prefixed with 2 bytes length
     :param reader: Stream reader
     :return: bytes read from stream (without length)
     """
@@ -99,8 +94,7 @@ def encode_data_with_length(data: bytes) -> bytes:
 
 
 async def decode_packet_id(reader) -> int:
-    """
-    Read a packet ID as 2-bytes int from stream according to MQTT specification (2.3.1)
+    """Read a packet ID as 2-bytes int from stream according to MQTT specification (2.3.1)
     :param reader: Stream reader
     :return: Packet ID
     """
@@ -110,8 +104,7 @@ async def decode_packet_id(reader) -> int:
 
 
 def int_to_bytes_str(value: int) -> bytes:
-    """
-    Converts a int value to a bytes array containing the numeric character.
+    """Converts a int value to a bytes array containing the numeric character.
     Ex: 123 -> b'123'
     :param value: int value to convert
     :return: bytes array

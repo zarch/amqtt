@@ -1,21 +1,20 @@
 # Copyright (c) 2015 Nicolas JOUANIN
 #
 # See the file license.txt for copying permission.
-from amqtt.mqtt.packet import (
-    MQTTPacket,
-    MQTTFixedHeader,
-    SUBACK,
-    PacketIdVariableHeader,
-    MQTTPayload,
-    MQTTVariableHeader,
-)
-from amqtt.errors import AMQTTException, NoDataException
 from amqtt.adapters import ReaderAdapter
 from amqtt.codecs import bytes_to_int, int_to_bytes, read_or_raise
+from amqtt.errors import AMQTTException, NoDataException
+from amqtt.mqtt.packet import (
+    SUBACK,
+    MQTTFixedHeader,
+    MQTTPacket,
+    MQTTPayload,
+    MQTTVariableHeader,
+    PacketIdVariableHeader,
+)
 
 
 class SubackPayload(MQTTPayload):
-
     __slots__ = ("return_codes",)
 
     RETURN_CODE_00 = 0x00
@@ -28,10 +27,12 @@ class SubackPayload(MQTTPayload):
         self.return_codes = return_codes or []
 
     def __repr__(self):
-        return type(self).__name__ + "(return_codes={})".format(repr(self.return_codes))
+        return type(self).__name__ + f"(return_codes={self.return_codes!r})"
 
     def to_bytes(
-        self, fixed_header: MQTTFixedHeader, variable_header: MQTTVariableHeader
+        self,
+        fixed_header: MQTTFixedHeader,
+        variable_header: MQTTVariableHeader,
     ):
         out = b""
         for return_code in self.return_codes:
@@ -73,7 +74,7 @@ class SubackPacket(MQTTPacket):
             if fixed.packet_type is not SUBACK:
                 raise AMQTTException(
                     "Invalid fixed packet type %s for SubackPacket init"
-                    % fixed.packet_type
+                    % fixed.packet_type,
                 )
             header = fixed
 

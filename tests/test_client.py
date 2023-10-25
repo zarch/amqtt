@@ -2,16 +2,16 @@
 #
 # See the file license.txt for copying permission.
 import asyncio
-import os
 import logging
-import urllib.request
-import tempfile
+import os
 import shutil
+import tempfile
+import urllib.request
 
 import pytest
 
-from amqtt.client import MQTTClient, ConnectException
 from amqtt.broker import Broker
+from amqtt.client import ConnectException, MQTTClient
 from amqtt.mqtt.constants import QOS_0, QOS_1, QOS_2
 
 formatter = (
@@ -41,9 +41,9 @@ def setup_module():
 
     temp_dir = tempfile.mkdtemp(prefix="amqtt-test-")
     url = "http://test.mosquitto.org/ssl/mosquitto.org.crt"
-    ca_file = os.path.join(temp_dir, "mosquitto.org.crt")
+    ca_file = os.path.join(temp_dir, "mosquito.org.crt")
     urllib.request.urlretrieve(url, ca_file)
-    log.info("stored mosquitto cert at %s" % ca_file)
+    log.info("stored mosquito cert at %s" % ca_file)
 
 
 def teardown_module():
@@ -146,7 +146,7 @@ async def test_subscribe():
             ("$SYS/broker/uptime", QOS_0),
             ("$SYS/broker/uptime", QOS_1),
             ("$SYS/broker/uptime", QOS_2),
-        ]
+        ],
     )
     assert ret[0] == QOS_0
     assert ret[1] == QOS_1
@@ -165,7 +165,7 @@ async def test_unsubscribe():
     ret = await client.subscribe(
         [
             ("$SYS/broker/uptime", QOS_0),
-        ]
+        ],
     )
     assert ret[0] == QOS_0
     await client.unsubscribe(["$SYS/broker/uptime"])
@@ -184,7 +184,7 @@ async def test_deliver():
     ret = await client.subscribe(
         [
             ("test_topic", QOS_0),
-        ]
+        ],
     )
     assert ret[0] == QOS_0
     client_pub = MQTTClient()
@@ -210,7 +210,7 @@ async def test_deliver_timeout():
     ret = await client.subscribe(
         [
             ("test_topic", QOS_0),
-        ]
+        ],
     )
     assert ret[0] == QOS_0
     with pytest.raises(asyncio.TimeoutError):
@@ -222,9 +222,7 @@ async def test_deliver_timeout():
 
 @pytest.mark.asyncio
 async def test_cancel_publish_qos1():
-    """
-    Tests that timeouts on published messages will clean up in flight messages
-    """
+    """Tests that timeouts on published messages will clean up in flight messages"""
     data = b"data"
     broker = Broker(broker_config, plugin_namespace="amqtt.test.plugins")
     await broker.start()
@@ -247,9 +245,7 @@ async def test_cancel_publish_qos1():
 
 @pytest.mark.asyncio
 async def test_cancel_publish_qos2_pubrec():
-    """
-    Tests that timeouts on published messages will clean up in flight messages
-    """
+    """Tests that timeouts on published messages will clean up in flight messages"""
     data = b"data"
     broker = Broker(broker_config, plugin_namespace="amqtt.test.plugins")
     await broker.start()
@@ -275,9 +271,7 @@ async def test_cancel_publish_qos2_pubrec():
 
 @pytest.mark.asyncio
 async def test_cancel_publish_qos2_pubcomp():
-    """
-    Tests that timeouts on published messages will clean up in flight messages
-    """
+    """Tests that timeouts on published messages will clean up in flight messages"""
     data = b"data"
     broker = Broker(broker_config, plugin_namespace="amqtt.test.plugins")
     await broker.start()

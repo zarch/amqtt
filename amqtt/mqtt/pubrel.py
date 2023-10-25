@@ -1,13 +1,13 @@
 # Copyright (c) 2015 Nicolas JOUANIN
 #
 # See the file license.txt for copying permission.
+from amqtt.errors import AMQTTException
 from amqtt.mqtt.packet import (
-    MQTTPacket,
-    MQTTFixedHeader,
     PUBREL,
+    MQTTFixedHeader,
+    MQTTPacket,
     PacketIdVariableHeader,
 )
-from amqtt.errors import AMQTTException
 
 
 class PubrelPacket(MQTTPacket):
@@ -33,7 +33,7 @@ class PubrelPacket(MQTTPacket):
             if fixed.packet_type is not PUBREL:
                 raise AMQTTException(
                     "Invalid fixed packet type %s for PubrelPacket init"
-                    % fixed.packet_type
+                    % fixed.packet_type,
                 )
             header = fixed
         super().__init__(header)

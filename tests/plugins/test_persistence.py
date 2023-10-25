@@ -2,11 +2,12 @@
 #
 # See the file license.txt for copying permission.
 
-import unittest
+import asyncio
 import logging
 import os
-import asyncio
 import sqlite3
+import unittest
+
 from amqtt.plugins.manager import BaseContext
 from amqtt.plugins.persistence import SQLitePlugin
 

@@ -4,9 +4,9 @@
 import asyncio
 import unittest
 
-from amqtt.mqtt.unsuback import UnsubackPacket
-from amqtt.mqtt.packet import PacketIdVariableHeader
 from amqtt.adapters import BufferReader
+from amqtt.mqtt.packet import PacketIdVariableHeader
+from amqtt.mqtt.unsuback import UnsubackPacket
 
 
 class UnsubackPacketTest(unittest.TestCase):

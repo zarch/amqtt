@@ -4,9 +4,9 @@
 import asyncio
 import unittest
 
-from amqtt.mqtt.unsubscribe import UnsubscribePacket, UnubscribePayload
-from amqtt.mqtt.packet import PacketIdVariableHeader
 from amqtt.adapters import BufferReader
+from amqtt.mqtt.packet import PacketIdVariableHeader
+from amqtt.mqtt.unsubscribe import UnsubscribePacket, UnubscribePayload
 
 
 class UnsubscribePacketTest(unittest.TestCase):

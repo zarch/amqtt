@@ -1,12 +1,11 @@
 import inspect
+from glob import glob
 from logging import getLogger
-from os.path import join, dirname, isfile
+from os.path import dirname, isfile, join
 
 import pytest
 
 import amqtt.plugins
-from glob import glob
-
 from amqtt.plugins.manager import BaseContext
 
 _INVALID_METHOD = "invalid_foo"

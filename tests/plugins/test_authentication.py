@@ -2,12 +2,13 @@
 #
 # See the file license.txt for copying permission.
 
-import unittest
+import asyncio
 import logging
 import os
-import asyncio
-from amqtt.plugins.manager import BaseContext
+import unittest
+
 from amqtt.plugins.authentication import AnonymousAuthPlugin, FileAuthPlugin
+from amqtt.plugins.manager import BaseContext
 from amqtt.session import Session
 
 formatter = (
@@ -61,9 +62,10 @@ class TestFileAuthPlugin(unittest.TestCase):
         context.config = {
             "auth": {
                 "password-file": os.path.join(
-                    os.path.dirname(os.path.realpath(__file__)), "passwd"
-                )
-            }
+                    os.path.dirname(os.path.realpath(__file__)),
+                    "passwd",
+                ),
+            },
         }
         s = Session()
         s.username = "user"
@@ -78,9 +80,10 @@ class TestFileAuthPlugin(unittest.TestCase):
         context.config = {
             "auth": {
                 "password-file": os.path.join(
-                    os.path.dirname(os.path.realpath(__file__)), "passwd"
-                )
-            }
+                    os.path.dirname(os.path.realpath(__file__)),
+                    "passwd",
+                ),
+            },
         }
         s = Session()
         s.username = "user"
@@ -95,9 +98,10 @@ class TestFileAuthPlugin(unittest.TestCase):
         context.config = {
             "auth": {
                 "password-file": os.path.join(
-                    os.path.dirname(os.path.realpath(__file__)), "passwd"
-                )
-            }
+                    os.path.dirname(os.path.realpath(__file__)),
+                    "passwd",
+                ),
+            },
         }
         s = Session()
         s.username = "some user"

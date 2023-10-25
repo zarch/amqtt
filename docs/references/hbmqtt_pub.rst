@@ -16,9 +16,9 @@ Usage
              [ --will-topic WILL_TOPIC [--will-message WILL_MESSAGE] [--will-qos WILL_QOS] [--will-retain] ]
              [--extra-headers HEADER]
 
-Note that for simplicity, ``amqtt_pub`` uses mostly the same argument syntax as `mosquitto_pub`_.
+Note that for simplicity, ``amqtt_pub`` uses mostly the same argument syntax as `mosquito_pub`_.
 
-.. _mosquitto_pub: http://mosquitto.org/man/mosquitto_pub-1.html
+.. _mosquito_pub: http://mosquitto.org/man/mosquitto_pub-1.html
 
 Options
 -------
@@ -26,7 +26,7 @@ Options
 --version           amqtt version information
 -h, --help          Display ``amqtt_pub`` usage help
 -c                  Set the YAML configuration file to read and pass to the client runtime.
--d                  Enable debugging informations.
+-d                  Enable debugging information.
 --ca-file           Define the path to a file containing PEM encoded CA certificates that are trusted. Used to enable SSL communication.
 --ca-path           Define the path to a directory containing PEM encoded CA certificates that are trusted. Used to enable SSL communication.
 --ca-data           Set the PEM encoded CA certificates that are trusted. Used to enable SSL communication.
@@ -70,7 +70,7 @@ If ``-c`` argument is given, ``amqtt_pub`` will read specific MQTT settings for 
 Examples
 --------
 
-Examples below are adapted from `mosquitto_pub`_ documentation.
+Examples below are adapted from `mosquito_pub`_ documentation.
 
 
 Publish temperature information to localhost with QoS 1:
@@ -101,5 +101,4 @@ Publish temperature information to localhost with QoS 1 over mqtt encapsulated i
     amqtt_pub --url wss://localhost -t sensors/temperature -m 32 -q 1 --extra-headers '{"Authorization": "Bearer <token>"}'
 
 
-.. _mosquitto_pub : http://mosquitto.org/man/mosquitto_pub-1.html
-
+.. _mosquito_pub : http://mosquitto.org/man/mosquitto_pub-1.html

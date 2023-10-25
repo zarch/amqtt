@@ -1,24 +1,25 @@
 # Copyright (c) 2015 Nicolas JOUANIN
 #
 # See the file license.txt for copying permission.
-import unittest
 import asyncio
 import logging
 import random
-from amqtt.plugins.manager import PluginManager
-from amqtt.session import (
-    Session,
-    OutgoingApplicationMessage,
-    IncomingApplicationMessage,
-)
-from amqtt.mqtt.protocol.handler import ProtocolHandler
-from amqtt.adapters import StreamWriterAdapter, StreamReaderAdapter
+import unittest
+
+from amqtt.adapters import StreamReaderAdapter, StreamWriterAdapter
 from amqtt.mqtt.constants import QOS_0, QOS_1, QOS_2
-from amqtt.mqtt.publish import PublishPacket
+from amqtt.mqtt.protocol.handler import ProtocolHandler
 from amqtt.mqtt.puback import PubackPacket
+from amqtt.mqtt.pubcomp import PubcompPacket
+from amqtt.mqtt.publish import PublishPacket
 from amqtt.mqtt.pubrec import PubrecPacket
 from amqtt.mqtt.pubrel import PubrelPacket
-from amqtt.mqtt.pubcomp import PubcompPacket
+from amqtt.plugins.manager import PluginManager
+from amqtt.session import (
+    IncomingApplicationMessage,
+    OutgoingApplicationMessage,
+    Session,
+)
 
 formatter = (
     "[%(asctime)s] %(name)s {%(filename)s:%(lineno)d} %(levelname)s - %(message)s"
@@ -75,7 +76,7 @@ class ProtocolHandlerTest(unittest.TestCase):
         server.close()
         self.loop.run_until_complete(server.wait_closed())
         if future.exception():
-            raise future.exception()
+            raise future.exception
 
     def test_publish_qos0(self):
         async def server_mock(reader, writer):
@@ -96,7 +97,10 @@ class ProtocolHandlerTest(unittest.TestCase):
                 handler.attach(s, reader_adapted, writer_adapted)
                 await self.start_handler(handler, s)
                 message = await handler.mqtt_publish(
-                    "/topic", b"test_data", QOS_0, False
+                    "/topic",
+                    b"test_data",
+                    QOS_0,
+                    False,
                 )
                 self.assertIsInstance(message, OutgoingApplicationMessage)
                 self.assertIsNotNone(message.publish_packet)
@@ -116,7 +120,7 @@ class ProtocolHandlerTest(unittest.TestCase):
         server.close()
         self.loop.run_until_complete(server.wait_closed())
         if future.exception():
-            raise future.exception()
+            raise future.exception
 
     def test_publish_qos1(self):
         async def server_mock(reader, writer):
@@ -140,7 +144,10 @@ class ProtocolHandlerTest(unittest.TestCase):
                 self.handler.attach(self.session, reader_adapted, writer_adapted)
                 await self.start_handler(self.handler, self.session)
                 message = await self.handler.mqtt_publish(
-                    "/topic", b"test_data", QOS_1, False
+                    "/topic",
+                    b"test_data",
+                    QOS_1,
+                    False,
                 )
                 self.assertIsInstance(message, OutgoingApplicationMessage)
                 self.assertIsNotNone(message.publish_packet)
@@ -164,7 +171,7 @@ class ProtocolHandlerTest(unittest.TestCase):
         server.close()
         self.loop.run_until_complete(server.wait_closed())
         if future.exception():
-            raise future.exception()
+            raise future.exception
 
     def test_publish_qos2(self):
         async def server_mock(reader, writer):
@@ -193,7 +200,10 @@ class ProtocolHandlerTest(unittest.TestCase):
                 self.handler.attach(self.session, reader_adapted, writer_adapted)
                 await self.start_handler(self.handler, self.session)
                 message = await self.handler.mqtt_publish(
-                    "/topic", b"test_data", QOS_2, False
+                    "/topic",
+                    b"test_data",
+                    QOS_2,
+                    False,
                 )
                 self.assertIsInstance(message, OutgoingApplicationMessage)
                 self.assertIsNotNone(message.publish_packet)
@@ -217,12 +227,17 @@ class ProtocolHandlerTest(unittest.TestCase):
         server.close()
         self.loop.run_until_complete(server.wait_closed())
         if future.exception():
-            raise future.exception()
+            raise future.exception
 
     def test_receive_qos0(self):
         async def server_mock(reader, writer):
             packet = PublishPacket.build(
-                "/topic", b"test_data", rand_packet_id(), False, QOS_0, False
+                "/topic",
+                b"test_data",
+                rand_packet_id(),
+                False,
+                QOS_0,
+                False,
             )
             await packet.to_stream(writer)
 
@@ -254,13 +269,18 @@ class ProtocolHandlerTest(unittest.TestCase):
         server.close()
         self.loop.run_until_complete(server.wait_closed())
         if future.exception():
-            raise future.exception()
+            raise future.exception
 
     def test_receive_qos1(self):
         async def server_mock(reader, writer):
             try:
                 packet = PublishPacket.build(
-                    "/topic", b"test_data", rand_packet_id(), False, QOS_1, False
+                    "/topic",
+                    b"test_data",
+                    rand_packet_id(),
+                    False,
+                    QOS_1,
+                    False,
                 )
                 await packet.to_stream(writer)
                 puback = await PubackPacket.from_stream(reader)
@@ -299,13 +319,18 @@ class ProtocolHandlerTest(unittest.TestCase):
         server.close()
         self.loop.run_until_complete(server.wait_closed())
         if future.exception():
-            raise future.exception()
+            raise future.exception
 
     def test_receive_qos2(self):
         async def server_mock(reader, writer):
             try:
                 packet = PublishPacket.build(
-                    "/topic", b"test_data", rand_packet_id(), False, QOS_2, False
+                    "/topic",
+                    b"test_data",
+                    rand_packet_id(),
+                    False,
+                    QOS_2,
+                    False,
                 )
                 await packet.to_stream(writer)
                 pubrec = await PubrecPacket.from_stream(reader)
@@ -348,7 +373,7 @@ class ProtocolHandlerTest(unittest.TestCase):
         server.close()
         self.loop.run_until_complete(server.wait_closed())
         if future.exception():
-            raise future.exception()
+            raise future.exception
 
     async def start_handler(self, handler, session):
         self.check_empty_waiters(handler)
@@ -403,7 +428,12 @@ class ProtocolHandlerTest(unittest.TestCase):
         self.session = Session()
         message = OutgoingApplicationMessage(1, "/topic", QOS_1, b"test_data", False)
         message.publish_packet = PublishPacket.build(
-            "/topic", b"test_data", rand_packet_id(), False, QOS_1, False
+            "/topic",
+            b"test_data",
+            rand_packet_id(),
+            False,
+            QOS_1,
+            False,
         )
         self.session.inflight_out[1] = message
         future = asyncio.Future()
@@ -414,7 +444,7 @@ class ProtocolHandlerTest(unittest.TestCase):
         server.close()
         self.loop.run_until_complete(server.wait_closed())
         if future.exception():
-            raise future.exception()
+            raise future.exception
 
     def test_publish_qos2_retry(self):
         async def server_mock(reader, writer):
@@ -452,7 +482,12 @@ class ProtocolHandlerTest(unittest.TestCase):
         self.session = Session()
         message = OutgoingApplicationMessage(1, "/topic", QOS_2, b"test_data", False)
         message.publish_packet = PublishPacket.build(
-            "/topic", b"test_data", rand_packet_id(), False, QOS_2, False
+            "/topic",
+            b"test_data",
+            rand_packet_id(),
+            False,
+            QOS_2,
+            False,
         )
         self.session.inflight_out[1] = message
         future = asyncio.Future()
@@ -463,4 +498,4 @@ class ProtocolHandlerTest(unittest.TestCase):
         server.close()
         self.loop.run_until_complete(server.wait_closed())
         if future.exception():
-            raise future.exception()
+            raise future.exception

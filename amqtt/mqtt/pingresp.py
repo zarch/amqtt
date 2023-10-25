@@ -1,8 +1,8 @@
 # Copyright (c) 2015 Nicolas JOUANIN
 #
 # See the file license.txt for copying permission.
-from amqtt.mqtt.packet import MQTTPacket, MQTTFixedHeader, PINGRESP
 from amqtt.errors import AMQTTException
+from amqtt.mqtt.packet import PINGRESP, MQTTFixedHeader, MQTTPacket
 
 
 class PingRespPacket(MQTTPacket):
@@ -16,7 +16,7 @@ class PingRespPacket(MQTTPacket):
             if fixed.packet_type is not PINGRESP:
                 raise AMQTTException(
                     "Invalid fixed packet type %s for PingRespPacket init"
-                    % fixed.packet_type
+                    % fixed.packet_type,
                 )
             header = fixed
         super().__init__(header)

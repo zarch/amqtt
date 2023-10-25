@@ -1,15 +1,10 @@
 # Copyright (c) 2015 Nicolas JOUANIN
 #
 # See the file license.txt for copying permission.
-import unittest
 import asyncio
+import unittest
 
-from amqtt.codecs import (
-    bytes_to_hex_str,
-    bytes_to_int,
-    decode_string,
-    encode_string,
-)
+from amqtt.codecs import bytes_to_hex_str, bytes_to_int, decode_string, encode_string
 
 
 class TestCodecs(unittest.TestCase):

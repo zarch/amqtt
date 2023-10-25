@@ -29,7 +29,7 @@ poetry run amqtt_pub
 poetry run amqtt_sub
 ```
 
-Or you can enter the virtual enviroment via:
+Or you can enter the virtual environment via:
 ```
 poetry shell
 ```

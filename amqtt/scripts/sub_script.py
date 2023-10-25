@@ -1,8 +1,7 @@
 # Copyright (c) 2015 Nicolas JOUANIN
 #
 # See the file license.txt for copying permission.
-"""
-amqtt_sub - MQTT 3.1.1 publisher
+"""amqtt_sub - MQTT 3.1.1 publisher
 
 Usage:
     amqtt_sub --version
@@ -17,7 +16,7 @@ Options:
     -i CLIENT_ID        Id to use as client ID.
     -n COUNT            Number of messages to read before ending.
     -q | --qos QOS      Quality of service desired to receive messages, from 0, 1 and 2. Defaults to 0.
-    -t TOPIC...         Topic filter to subcribe
+    -t TOPIC...         Topic filter to subscribe
     -k KEEP_ALIVE       Keep alive timeout in second
     --clean-session     Clean session on connect (defaults to False)
     --ca-file CAFILE]   CA file
@@ -29,18 +28,19 @@ Options:
     --will-retain
     --extra-headers EXTRA_HEADERS      JSON object with key-value pairs of additional headers for websocket connections
     -d                  Enable debug messages
-"""
+"""  # noqa: E501
 
-import sys
-import logging
 import asyncio
-import os
 import json
+import logging
+import os
+import sys
+
+from docopt import docopt
 
 import amqtt
-from amqtt.client import MQTTClient, ConnectException
+from amqtt.client import ConnectException, MQTTClient
 from amqtt.errors import MQTTException
-from docopt import docopt
 from amqtt.mqtt.constants import QOS_0
 from amqtt.utils import read_yaml_config
 
@@ -59,19 +59,18 @@ def _gen_client_id():
 def _get_qos(arguments):
     try:
         return int(arguments["--qos"][0])
-    except:
+    except Exception:
         return QOS_0
 
 
 def _get_extra_headers(arguments):
     try:
         return json.loads(arguments["--extra-headers"])
-    except:
+    except Exception:
         return {}
 
 
 async def do_sub(client, arguments):
-
     try:
         await client.connect(
             uri=arguments["--url"],
@@ -130,13 +129,15 @@ def main(*args, **kwargs):
     else:
         config = read_yaml_config(
             os.path.join(
-                os.path.dirname(os.path.realpath(__file__)), "default_client.yaml"
-            )
+                os.path.dirname(os.path.realpath(__file__)),
+                "default_client.yaml",
+            ),
         )
         logger.debug(
             os.path.join(
-                os.path.dirname(os.path.realpath(__file__)), "default_client.yaml"
-            )
+                os.path.dirname(os.path.realpath(__file__)),
+                "default_client.yaml",
+            ),
         )
         logger.debug("Using default configuration")
     loop = asyncio.get_event_loop()

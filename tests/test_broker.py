@@ -5,37 +5,36 @@ import asyncio
 import logging
 import socket
 import sys
-from unittest.mock import call, MagicMock, patch
+from unittest.mock import MagicMock, call, patch
 
 import psutil
 import pytest
 
 from amqtt.adapters import StreamReaderAdapter, StreamWriterAdapter
 from amqtt.broker import (
-    EVENT_BROKER_PRE_START,
-    EVENT_BROKER_POST_START,
-    EVENT_BROKER_PRE_SHUTDOWN,
-    EVENT_BROKER_POST_SHUTDOWN,
     EVENT_BROKER_CLIENT_CONNECTED,
     EVENT_BROKER_CLIENT_DISCONNECTED,
     EVENT_BROKER_CLIENT_SUBSCRIBED,
     EVENT_BROKER_CLIENT_UNSUBSCRIBED,
     EVENT_BROKER_MESSAGE_RECEIVED,
+    EVENT_BROKER_POST_SHUTDOWN,
+    EVENT_BROKER_POST_START,
+    EVENT_BROKER_PRE_SHUTDOWN,
+    EVENT_BROKER_PRE_START,
 )
-from amqtt.client import MQTTClient, ConnectException
+from amqtt.client import ConnectException, MQTTClient
 from amqtt.mqtt import (
-    ConnectPacket,
     ConnackPacket,
+    ConnectPacket,
+    DisconnectPacket,
+    PubcompPacket,
     PublishPacket,
     PubrecPacket,
     PubrelPacket,
-    PubcompPacket,
-    DisconnectPacket,
 )
-from amqtt.mqtt.connect import ConnectVariableHeader, ConnectPayload
+from amqtt.mqtt.connect import ConnectPayload, ConnectVariableHeader
 from amqtt.mqtt.constants import QOS_0, QOS_1, QOS_2
 from amqtt.mqtt.protocol.broker_handler import BrokerProtocolHandler
-
 
 formatter = (
     "[%(asctime)s] %(name)s {%(filename)s:%(lineno)d} %(levelname)s - %(message)s"
@@ -87,10 +86,12 @@ async def test_client_connect(broker, mock_plugin_manager):
     mock_plugin_manager.assert_has_calls(
         [
             call().fire_event(
-                EVENT_BROKER_CLIENT_CONNECTED, client_id=client.session.client_id
+                EVENT_BROKER_CLIENT_CONNECTED,
+                client_id=client.session.client_id,
             ),
             call().fire_event(
-                EVENT_BROKER_CLIENT_DISCONNECTED, client_id=client.session.client_id
+                EVENT_BROKER_CLIENT_DISCONNECTED,
+                client_id=client.session.client_id,
             ),
         ],
         any_order=True,
@@ -202,7 +203,7 @@ async def test_client_subscribe(broker, mock_plugin_manager):
                 client_id=client.session.client_id,
                 topic="/topic",
                 qos=QOS_0,
-            )
+            ),
         ],
         any_order=True,
     )
@@ -239,7 +240,7 @@ async def test_client_subscribe_twice(broker, mock_plugin_manager):
                 client_id=client.session.client_id,
                 topic="/topic",
                 qos=QOS_0,
-            )
+            ),
         ],
         any_order=True,
     )
@@ -451,7 +452,9 @@ async def test_client_publish_big(broker, mock_plugin_manager):
     assert ret == 0
 
     ret_message = await pub_client.publish(
-        "/topic", bytearray(b"\x99" * 256 * 1024), QOS_2
+        "/topic",
+        bytearray(b"\x99" * 256 * 1024),
+        QOS_2,
     )
     await pub_client.disconnect()
     assert broker._retained_messages == {}
@@ -502,7 +505,7 @@ async def test_client_subscribe_publish(broker):
     sub_client = MQTTClient()
     await sub_client.connect("mqtt://127.0.0.1")
     ret = await sub_client.subscribe(
-        [("/qos0", QOS_0), ("/qos1", QOS_1), ("/qos2", QOS_2)]
+        [("/qos0", QOS_0), ("/qos1", QOS_1), ("/qos2", QOS_2)],
     )
     assert ret == [QOS_0, QOS_1, QOS_2]
 
@@ -530,7 +533,7 @@ async def test_client_subscribe_invalid(broker):
             ("+/tennis/#", QOS_0),
             ("sport+", QOS_0),
             ("sport/+/player1", QOS_0),
-        ]
+        ],
     )
     assert ret == [QOS_0, QOS_0, 0x80, QOS_0]
 
@@ -594,13 +597,14 @@ async def test_client_subscribe_publish_dollar_topic_2(broker):
 
 @pytest.mark.asyncio
 @pytest.mark.xfail(
-    reason="see https://github.com/Yakifo/aio-amqtt/issues/16", strict=False
+    reason="see https://github.com/Yakifo/aio-amqtt/issues/16",
+    strict=False,
 )
 async def test_client_publish_retain_subscribe(broker):
     sub_client = MQTTClient()
     await sub_client.connect("mqtt://127.0.0.1", cleansession=False)
     ret = await sub_client.subscribe(
-        [("/qos0", QOS_0), ("/qos1", QOS_1), ("/qos2", QOS_2)]
+        [("/qos0", QOS_0), ("/qos1", QOS_1), ("/qos2", QOS_2)],
     )
     assert ret == [QOS_0, QOS_1, QOS_2]
     await sub_client.disconnect()
@@ -679,7 +683,9 @@ async def test_broker_broadcast_cancellation(broker):
     await sub_client.subscribe([(topic, qos)])
 
     with patch.object(
-        BrokerProtocolHandler, "mqtt_publish", side_effect=asyncio.CancelledError
+        BrokerProtocolHandler,
+        "mqtt_publish",
+        side_effect=asyncio.CancelledError,
     ) as mocked_mqtt_publish:
         await _client_publish(topic, data, qos)
 

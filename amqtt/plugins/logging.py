@@ -13,7 +13,7 @@ class EventLoggerPlugin:
 
     async def log_event(self, *args, **kwargs):
         self.context.logger.info(
-            "### '%s' EVENT FIRED ###" % kwargs["event_name"].replace("old", "")
+            "### '%s' EVENT FIRED ###" % kwargs["event_name"].replace("old", ""),
         )
 
     def __getattr__(self, name):
@@ -32,7 +32,7 @@ class PacketLoggerPlugin:
         if self.context.logger.isEnabledFor(logging.DEBUG):
             if session:
                 self.context.logger.debug(
-                    "{} <-in-- {}".format(session.client_id, repr(packet))
+                    f"{session.client_id} <-in-- {packet!r}",
                 )
             else:
                 self.context.logger.debug("<-in-- %s" % repr(packet))
@@ -43,7 +43,7 @@ class PacketLoggerPlugin:
         if self.context.logger.isEnabledFor(logging.DEBUG):
             if session:
                 self.context.logger.debug(
-                    "{} -out-> {}".format(session.client_id, repr(packet))
+                    f"{session.client_id} -out-> {packet!r}",
                 )
             else:
                 self.context.logger.debug("-out-> %s" % repr(packet))

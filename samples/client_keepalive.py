@@ -1,8 +1,7 @@
-import logging
 import asyncio
+import logging
 
 from amqtt.client import MQTTClient
-
 
 #
 # This sample shows a client running idle.

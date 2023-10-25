@@ -1,12 +1,12 @@
 # Copyright (c) 2015 Nicolas JOUANIN
 #
 # See the file license.txt for copying permission.
-import unittest
 import asyncio
+import unittest
 
-from amqtt.mqtt.connect import ConnectPacket, ConnectVariableHeader, ConnectPayload
-from amqtt.mqtt.packet import MQTTFixedHeader, CONNECT
 from amqtt.adapters import BufferReader
+from amqtt.mqtt.connect import ConnectPacket, ConnectPayload, ConnectVariableHeader
+from amqtt.mqtt.packet import CONNECT, MQTTFixedHeader
 
 
 class ConnectPacketTest(unittest.TestCase):
@@ -85,7 +85,11 @@ class ConnectPacketTest(unittest.TestCase):
         header = MQTTFixedHeader(CONNECT, 0x00, 0)
         variable_header = ConnectVariableHeader(0xCE, 0, "MQTT", 4)
         payload = ConnectPayload(
-            "0123456789", "WillTopic", b"WillMessage", "user", "password"
+            "0123456789",
+            "WillTopic",
+            b"WillMessage",
+            "user",
+            "password",
         )
         message = ConnectPacket(header, variable_header, payload)
         encoded = message.to_bytes()

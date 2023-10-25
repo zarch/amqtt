@@ -4,9 +4,9 @@
 import asyncio
 import unittest
 
-from amqtt.mqtt.publish import PublishPacket, PublishVariableHeader, PublishPayload
 from amqtt.adapters import BufferReader
 from amqtt.mqtt.constants import QOS_0, QOS_1, QOS_2
+from amqtt.mqtt.publish import PublishPacket, PublishPayload, PublishVariableHeader
 
 
 class PublishPacketTest(unittest.TestCase):

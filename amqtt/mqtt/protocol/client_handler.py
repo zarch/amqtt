@@ -3,23 +3,27 @@
 # See the file license.txt for copying permission.
 import asyncio
 from asyncio import futures
-from amqtt.mqtt.protocol.handler import ProtocolHandler, EVENT_MQTT_PACKET_RECEIVED
+
+from amqtt.mqtt.connack import ConnackPacket
+from amqtt.mqtt.connect import ConnectPacket, ConnectPayload, ConnectVariableHeader
 from amqtt.mqtt.disconnect import DisconnectPacket
 from amqtt.mqtt.pingreq import PingReqPacket
 from amqtt.mqtt.pingresp import PingRespPacket
-from amqtt.mqtt.subscribe import SubscribePacket
+from amqtt.mqtt.protocol.handler import EVENT_MQTT_PACKET_RECEIVED, ProtocolHandler
 from amqtt.mqtt.suback import SubackPacket
-from amqtt.mqtt.unsubscribe import UnsubscribePacket
+from amqtt.mqtt.subscribe import SubscribePacket
 from amqtt.mqtt.unsuback import UnsubackPacket
-from amqtt.mqtt.connect import ConnectVariableHeader, ConnectPayload, ConnectPacket
-from amqtt.mqtt.connack import ConnackPacket
-from amqtt.session import Session
+from amqtt.mqtt.unsubscribe import UnsubscribePacket
 from amqtt.plugins.manager import PluginManager
+from amqtt.session import Session
 
 
 class ClientProtocolHandler(ProtocolHandler):
     def __init__(
-        self, plugins_manager: PluginManager, session: Session = None, loop=None
+        self,
+        plugins_manager: PluginManager,
+        session: Session = None,
+        loop=None,
     ):
         super().__init__(plugins_manager, session, loop=loop)
         self._ping_task = None
@@ -78,7 +82,9 @@ class ClientProtocolHandler(ProtocolHandler):
         await self._send_packet(connect_packet)
         connack = await ConnackPacket.from_stream(self.reader)
         await self.plugins_manager.fire_event(
-            EVENT_MQTT_PACKET_RECEIVED, packet=connack, session=self.session
+            EVENT_MQTT_PACKET_RECEIVED,
+            packet=connack,
+            session=self.session,
         )
         return connack.return_code
 
@@ -94,11 +100,9 @@ class ClientProtocolHandler(ProtocolHandler):
         pass
 
     async def mqtt_subscribe(self, topics, packet_id):
-        """
-        :param topics: array of topics [{'filter':'/a/b', 'qos': 0x00}, ...]
+        """:param topics: array of topics [{'filter':'/a/b', 'qos': 0x00}, ...]
         :return:
         """
-
         # Build and send SUBSCRIBE message
         subscribe = SubscribePacket.build(topics, packet_id)
         await self._send_packet(subscribe)
@@ -120,13 +124,11 @@ class ClientProtocolHandler(ProtocolHandler):
         else:
             self.logger.warning(
                 "Received SUBACK for unknown pending subscription with Id: %s"
-                % packet_id
+                % packet_id,
             )
 
     async def mqtt_unsubscribe(self, topics, packet_id):
-        """
-
-        :param topics: array of topics ['/a/b', ...]
+        """:param topics: array of topics ['/a/b', ...]
         :return:
         """
         unsubscribe = UnsubscribePacket.build(topics, packet_id)
@@ -146,7 +148,7 @@ class ClientProtocolHandler(ProtocolHandler):
         else:
             self.logger.warning(
                 "Received UNSUBACK for unknown pending subscription with Id: %s"
-                % packet_id
+                % packet_id,
             )
 
     async def mqtt_disconnect(self):

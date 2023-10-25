@@ -1,9 +1,9 @@
 # Copyright (c) 2015 Nicolas JOUANIN
 #
 # See the file license.txt for copying permission.
-import unittest
-import logging
 import asyncio
+import logging
+import unittest
 
 from amqtt.plugins.manager import PluginManager
 
@@ -83,8 +83,7 @@ class TestPluginManager(unittest.TestCase):
         self.assertEqual(ret[plugin], "TEST")
 
     def test_map_coro_filter(self):
-        """
-        Run plugin coro but expect no return as an empty filter is given
+        """Run plugin coro but expect no return as an empty filter is given
         :return:
         """
 
